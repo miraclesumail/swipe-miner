@@ -1,0 +1,57 @@
+.container {
+  display: grid;
+  position: relative;
+}
+
+.notOpen {
+  background: grey;
+  border: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.odd {
+  background: yellowgreen;
+}
+
+.even {
+  background: palegoldenrod;
+}
+
+.text {
+  background: pink;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #000;
+}
+
+.bomb {
+  position: relative;
+
+  &::after {
+    position: absolute;
+    content: "";
+    display: block;
+    width: 70%;
+    height: 70%;
+    left: 15%;
+    top: 15%;
+    background: #000;
+    border-radius: 50%;
+  }
+}
+
+.gameover {
+  cursor: pointer;
+  position: absolute;
+  top: calc(50% - 40px);
+  left: calc(50% - 100px);
+  width: 200px;
+  height: 80px;
+  background: orange;
+  border-radius: 20px;
+  line-height: 80px;
+  text-align: center;
+}
