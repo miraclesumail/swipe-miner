@@ -26,10 +26,8 @@ interface GridProps {
   [key: string]: any;
 }
 
-const Grid: FC<GridProps> = ({ type, amount, x, y, index, level, showMode }) => {
-  const timer = useRef<any>(null);
-
-  const { clickArrs, flagArrs, isFliping, bombsAxisArrs, judgeGridType, dispatch } = useContext(Context);
+const Grid: FC<GridProps> = ({ type, amount, x, y, index, level, showMode, clickBomb, startCount }) => {
+  const { clickArrs, flagArrs, isFliping, judgeGridType, dispatch } = useContext(Context);
 
   const getClassname = (x: number, y: number) => {
     if (y % 2) {
@@ -40,20 +38,9 @@ const Grid: FC<GridProps> = ({ type, amount, x, y, index, level, showMode }) => 
     return styles.even;
   };
 
-  function toggleAllBomb(copyBombArrs: number[]) {
-    clearTimeout(timer.current);
-    if (!copyBombArrs.length) return dispatch({ type: "setIsOver", payload: true });
-
-    const targetIndex = copyBombArrs.shift() as number;
-    if (!clickArrs.includes(targetIndex)) {
-      dispatch({ type: "toggleClickArrs", payload: [targetIndex] });
-    }
-    timer.current = setTimeout(() => toggleAllBomb(copyBombArrs), 100);
-  }
-
   // 翻牌子
   function revealGrid(index: number, alreadyCheck = [] as any) {
-    const params = level === "normal" ? [10, 8] : [18, 14];
+    const params = level === "easy" ? [10, 8] : level === "medium" ? [18, 14] : [24, 20];
     const siblings = getValidSiblings(index, params[0], params[1]);
 
     const filterSiblings = getRestArrs(siblings, alreadyCheck);
@@ -67,19 +54,17 @@ const Grid: FC<GridProps> = ({ type, amount, x, y, index, level, showMode }) => 
 
     // 带数字的格子
     if (type === GridType.around) {
+      // 还没有click过的
+      if (!clickArrs.length) startCount();
       return dispatch({ type: "toggleClickArrs", payload: [index] });
     }
 
     // 雷
     if (type === GridType.bomb) {
-      console.log("GridType.bombGridType.bomb");
-      dispatch({ type: "setIsFliping" });
-      dispatch({ type: "toggleClickArrs", payload: [index] });
-
-      const copyBombArrs = [...bombsAxisArrs].filter((item) => item !== index);
-      timer.current = setTimeout(() => toggleAllBomb(copyBombArrs), 100);
-      return;
+      return clickBomb(index);
     }
+
+    if (!clickArrs.length) startCount();
     dispatch({ type: "toggleClickArrs", payload: [index] });
     // 空格
     revealGrid(index);
@@ -104,7 +89,7 @@ const Grid: FC<GridProps> = ({ type, amount, x, y, index, level, showMode }) => 
     if (!clickArrs.includes(index) && !showMode) {
       return (
         <div className={styles.notOpen} onClick={onClick} onContextMenu={onContextMenu}>
-          {flagArrs.includes(index) && <img src={flagPng} width={20} />}
+          {flagArrs.includes(index) && <img src={flagPng} width={26} />}
         </div>
       );
     }

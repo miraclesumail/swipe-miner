@@ -2,7 +2,7 @@ import { useMemo, useCallback, useState } from "react";
 import { GridType } from "../components/grid";
 
 type Props = {
-  level: "normal" | "hard";
+  level: "easy" | "medium" | "hard";
 };
 
 /**
@@ -68,12 +68,18 @@ export function getValidSiblings(index: number, x: number, y: number) {
   return arrs;
 }
 
+/**
+ * 10 * 8 easy
+ * 18* 14 medium
+ * 24* 20 hard
+ * @returns
+ */
 const useGenerate = ({ level }: Props) => {
   const [dateTime, setDateTime] = useState(Date.now());
 
-  const bombsAmount = useMemo(() => (level === "normal" ? 10 : 40), [level]);
+  const bombsAmount = useMemo(() => (level === "easy" ? 10 : level === "medium" ? 40 : 99), [level]);
 
-  const [x, y] = useMemo(() => (level === "normal" ? [10, 8] : [18, 14]), [level]);
+  const [x, y] = useMemo(() => (level === "easy" ? [10, 8] : level === "medium" ? [18, 14] : [24, 20]), [level]);
 
   // 根据刷新时间重新生成
   const bombsAxisArrs = useMemo(() => {
@@ -114,19 +120,6 @@ const useGenerate = ({ level }: Props) => {
     },
     [bombsAxisArrs, x, y]
   );
-
-  //   function judgeGridType(index: number) {
-  //     if (bombsAxisArrs.includes(index)) {
-  //       return { type: GridType.bomb, amount: 0 };
-  //     }
-
-  //     const bombs = getBombsCount(index);
-
-  //     return {
-  //       type: bombs === 0 ? GridType.empty : GridType.around,
-  //       amount: bombs,
-  //     };
-  //   }
 
   return {
     bombsAxisArrs,

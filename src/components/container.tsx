@@ -1,5 +1,7 @@
-import { createContext, useMemo, useReducer } from "react";
+import { createContext, useMemo, useReducer, useRef } from "react";
+import Nav from "./nav";
 import useGenerate from "../hooks/useGenerate";
+import useCount from "../hooks/useCount";
 import GameOver from "./gameOver";
 import Grid from "./grid";
 import styles from "./style.module.scss";
@@ -17,6 +19,7 @@ type ContextProps = {
   judgeGridType: (params: any) => any;
   isFliping: boolean;
   dispatch: any;
+  level: string;
 };
 
 export const Context = createContext<ContextProps>({ flagArrs: [], clickArrs: [] } as any);
@@ -27,14 +30,13 @@ const initialState: any = {
   isFliping: false,
   isOver: false,
   showMode: false,
-  level: "hard",
+  level: "easy",
 };
 
 function reducer(state: typeof initialState, action: any) {
   switch (action.type) {
     case "toggleClickArrs": {
       return { ...state, clickArrs: Array.from(new Set([...state.clickArrs, ...action.payload])) };
-      //   return { ...state, clickArrs: [...state.clickArrs, ...action.payload] };
     }
     case "toggleFlagArrs": {
       if (state.flagArrs.includes(action.payload)) {
@@ -52,10 +54,13 @@ function reducer(state: typeof initialState, action: any) {
     case "setShowMode": {
       return { ...state, showMode: action.payload };
     }
+    case "setLevel": {
+      return { ...state, level: action.payload };
+    }
     case "reset": {
       return {
-        ...state,
         ...initialState,
+        level: state.level,
       };
     }
     default:
@@ -64,9 +69,12 @@ function reducer(state: typeof initialState, action: any) {
 }
 
 const Container = () => {
+  const timer = useRef<any>(null);
+
   const [{ flagArrs, clickArrs, isFliping, isOver, level, showMode }, dispatch]: any = useReducer(reducer, initialState);
 
-  const { bombsAxisArrs, x, y, judgeGridType, reset } = useGenerate({ level: "hard" });
+  const { count, startCount, reset: resetCount, stop } = useCount();
+  const { bombsAxisArrs, x, y, judgeGridType, reset } = useGenerate({ level });
 
   console.log(bombsAxisArrs, "bombsAxisArrsbombsAxisArrsbombsAxisArrs");
 
@@ -77,8 +85,37 @@ const Container = () => {
     gridTemplateRows: `repeat(${y}, 1fr)`,
   });
 
+  // 翻开所有雷
+  function toggleAllBomb(copyBombArrs: number[]) {
+    clearTimeout(timer.current);
+    if (!copyBombArrs.length) return dispatch({ type: "setIsOver", payload: true });
+
+    const targetIndex = copyBombArrs.shift() as number;
+    if (!clickArrs.includes(targetIndex)) {
+      dispatch({ type: "toggleClickArrs", payload: [targetIndex] });
+    }
+    timer.current = setTimeout(() => toggleAllBomb(copyBombArrs), 100);
+  }
+
+  // when hit a bomb
+  function clickBomb(index: number) {
+    console.log("GridType.bombGridType.bomb");
+    dispatch({ type: "setIsFliping" });
+    dispatch({ type: "toggleClickArrs", payload: [index] });
+    stop();
+    const copyBombArrs = [...bombsAxisArrs].filter((item) => item !== index);
+    timer.current = setTimeout(() => toggleAllBomb(copyBombArrs), 100);
+  }
+
+  function clearTimer() {
+    clearTimeout(timer.current);
+    timer.current = null;
+  }
+
+  // 重新开始游戏
   function resetGame() {
     reset();
+    resetCount();
     dispatch({ type: "reset" });
   }
 
@@ -92,16 +129,17 @@ const Container = () => {
   }, [flagArrs, clickArrs, bombsAxisArrs]);
 
   return (
-    <Context.Provider value={{ flagArrs, clickArrs, dispatch, bombsAxisArrs, judgeGridType, isFliping }}>
-      <div onClick={toggleShow}>{showMode ? "HIDE" : "SHOW"}</div>
-      <div className={styles.container} style={getStyles()}>
-        {Array.from({ length: x * y }, (_, index) => index).map((_, index) => (
-          // <Grid y={Math.floor(index / x)} x={index % x} type={bombsAxisArrs.includes(index) ? GridType.bomb : GridType.empty} />
-          <Grid key={index} index={index} y={Math.floor(index / x)} x={index % x} {...judgeGridType(index)} level={level} showMode={showMode} />
-        ))}
+    <Context.Provider value={{ flagArrs, clickArrs, dispatch, bombsAxisArrs, judgeGridType, isFliping, level }}>
+      <div>
+        <Nav resetGame={resetGame} toggleShow={toggleShow} clearTimer={clearTimer} bombsAxisArrs={bombsAxisArrs} flagArrs={flagArrs} count={count} level={level} />
+        <div className={styles.container} style={getStyles()}>
+          {Array.from({ length: x * y }, (_, index) => index).map((_, index) => (
+            <Grid key={index} index={index} y={Math.floor(index / x)} x={index % x} {...judgeGridType(index)} level={level} showMode={showMode} clickBomb={clickBomb} startCount={startCount} />
+          ))}
 
-        {isOver && <GameOver resetGame={resetGame} />}
-        {isSuccess && <GameOver resetGame={resetGame} type={"success"} />}
+          {isOver && <GameOver resetGame={resetGame} />}
+          {isSuccess && <GameOver resetGame={resetGame} type={"success"} />}
+        </div>
       </div>
     </Context.Provider>
   );
