@@ -1,8 +1,8 @@
 import classnames from "classnames";
 import styles from "./style.module.scss";
-import { FC, useRef, useState, useEffect } from "react";
+import { FC, useRef, useState, useEffect, useMemo } from "react";
 
-function useGameOver(resetGame: () => void) {
+function useGameOver(resetGame: () => void, type: string) {
   const ref = useRef<HTMLDivElement>(null);
   const [done, setDone] = useState<boolean>(false);
 
@@ -26,17 +26,29 @@ function useGameOver(resetGame: () => void) {
     done && resetGame();
   }
 
+  const text = useMemo(() => {
+    if (done) {
+      return "Play Again";
+    } else {
+      if (type === "success") {
+        return "Success Game";
+      } else {
+        return "Game Over";
+      }
+    }
+  }, [done, type]);
+
   useEffect(animationEnd, []);
 
   return {
-    text: done ? "Play Again" : "Game Over",
+    text,
     ref,
     restart,
   };
 }
 
-const GameOver: FC<any> = ({ resetGame }) => {
-  const { ref, text, restart } = useGameOver(resetGame);
+const GameOver: FC<any> = ({ resetGame, type = "fail" }) => {
+  const { ref, text, restart } = useGameOver(resetGame, type);
 
   return (
     <div ref={ref} className={classnames(styles.gameover, "animate__animated", "animate__fadeInUp")} onClick={restart}>

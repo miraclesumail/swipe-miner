@@ -59,7 +59,7 @@ const Grid: FC<GridProps> = ({ type, amount, x, y, index, level, showMode }) => 
     const filterSiblings = getRestArrs(siblings, alreadyCheck);
     dispatch({ type: "toggleClickArrs", payload: [...siblings, index] });
 
-    filterSiblings.filter((index) => judgeGridType(index).type === GridType.empty).forEach((item) => revealGrid(item, [...siblings, ...alreadyCheck, index]));
+    filterSiblings.filter((index) => judgeGridType(index).type === GridType.empty).forEach((item) => revealGrid(item, _.uniq([...siblings, ...alreadyCheck, index])));
   }
 
   const recursiveCheck = (index: number) => {

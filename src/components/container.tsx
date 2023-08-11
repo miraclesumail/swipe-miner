@@ -1,4 +1,4 @@
-import { createContext, useReducer } from "react";
+import { createContext, useMemo, useReducer } from "react";
 import useGenerate from "../hooks/useGenerate";
 import GameOver from "./gameOver";
 import Grid from "./grid";
@@ -86,6 +86,11 @@ const Container = () => {
     dispatch({ type: "setShowMode", payload: !showMode });
   }
 
+  // 是否通关
+  const isSuccess = useMemo(() => {
+    return flagArrs.length === bombsAxisArrs.length && flagArrs.length + clickArrs.length === x * y;
+  }, [flagArrs, clickArrs, bombsAxisArrs]);
+
   return (
     <Context.Provider value={{ flagArrs, clickArrs, dispatch, bombsAxisArrs, judgeGridType, isFliping }}>
       <div onClick={toggleShow}>{showMode ? "HIDE" : "SHOW"}</div>
@@ -96,6 +101,7 @@ const Container = () => {
         ))}
 
         {isOver && <GameOver resetGame={resetGame} />}
+        {isSuccess && <GameOver resetGame={resetGame} type={"success"} />}
       </div>
     </Context.Provider>
   );
