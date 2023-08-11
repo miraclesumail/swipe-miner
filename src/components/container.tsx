@@ -1,10 +1,10 @@
 import { createContext, useMemo, useReducer, useRef } from "react";
-import Nav from "./nav";
-import useGenerate from "../hooks/useGenerate";
-import useCount from "../hooks/useCount";
-import GameOver from "./gameOver";
-import Grid from "./grid";
-import styles from "./style.module.scss";
+import Nav from "@/components/nav";
+import useGenerate from "@/hooks/useGenerate";
+import useCount from "@/hooks/useCount";
+import GameOver from "@/components/gameOver";
+import Grid from "@/components/grid";
+import styles from "@/components/style.module.scss";
 
 /**
  * 10 * 8 small

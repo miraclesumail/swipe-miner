@@ -1,9 +1,9 @@
 import { ChangeEvent, useContext, FC } from "react";
-import { Context } from "./container";
+import { Context } from "@/components/container";
 import classnames from "classnames";
-import styles from "./style.module.scss";
-import flagPng from "../assets/flag.png";
-import clock from "../assets/clock.png";
+import styles from "@/components/style.module.scss";
+import flagPng from "@/assets/flag.png";
+import clock from "@/assets/clock.png";
 
 const Difficulty = [
   {

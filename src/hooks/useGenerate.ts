@@ -1,5 +1,5 @@
 import { useMemo, useCallback, useState } from "react";
-import { GridType } from "../components/grid";
+import { GridType } from "@/components/grid";
 
 type Props = {
   level: "easy" | "medium" | "hard";

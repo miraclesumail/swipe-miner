@@ -1,9 +1,9 @@
 import { FC, useContext, MouseEvent } from "react";
 import { getValidSiblings } from "../hooks/useGenerate";
 import _ from "lodash";
-import flagPng from "../assets/flag.png";
-import { Context } from "./container";
-import styles from "./style.module.scss";
+import flagPng from "@/assets/flag.png";
+import { Context } from "@/components/container";
+import styles from "@/components/style.module.scss";
 
 function getRestArrs(a: number[], b: number[]) {
   return a.filter((item) => !b.includes(item));

@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import styles from "./style.module.scss";
+import styles from "@/components/style.module.scss";
 import { FC, useRef, useState, useEffect, useMemo } from "react";
 
 function useGameOver(resetGame: () => void, type: string) {
