@@ -1,4 +1,4 @@
-import { FC, useContext, MouseEvent, useRef } from "react";
+import { FC, useContext, MouseEvent } from "react";
 import { getValidSiblings } from "../hooks/useGenerate";
 import _ from "lodash";
 import flagPng from "../assets/flag.png";
