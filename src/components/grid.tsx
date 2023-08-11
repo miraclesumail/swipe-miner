@@ -1,5 +1,5 @@
 import { FC, useContext, MouseEvent, useRef } from "react";
-import useGenerate, { getValidSiblings } from "../hooks/useGenerate";
+import { getValidSiblings } from "../hooks/useGenerate";
 import _ from "lodash";
 import flagPng from "../assets/flag.png";
 import { Context } from "./container";
@@ -26,7 +26,7 @@ interface GridProps {
   [key: string]: any;
 }
 
-const Grid: FC<GridProps> = ({ type, amount, x, y, index, level, showMode, checked, setChecked }) => {
+const Grid: FC<GridProps> = ({ type, amount, x, y, index, level, showMode }) => {
   const timer = useRef<any>(null);
 
   const { clickArrs, flagArrs, isFliping, bombsAxisArrs, judgeGridType, dispatch } = useContext(Context);

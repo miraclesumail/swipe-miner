@@ -1,5 +1,5 @@
-import { createContext, useState, useCallback, useReducer } from "react";
-import useGenerate, { getValidSiblings } from "../hooks/useGenerate";
+import { createContext, useReducer } from "react";
+import useGenerate from "../hooks/useGenerate";
 import GameOver from "./gameOver";
 import Grid from "./grid";
 import styles from "./style.module.scss";
@@ -64,7 +64,6 @@ function reducer(state: typeof initialState, action: any) {
 }
 
 const Container = () => {
-  const [checked, setChecked] = useState([]);
   const [{ flagArrs, clickArrs, isFliping, isOver, level, showMode }, dispatch]: any = useReducer(reducer, initialState);
 
   const { bombsAxisArrs, x, y, judgeGridType, reset } = useGenerate({ level: "hard" });
@@ -93,7 +92,7 @@ const Container = () => {
       <div className={styles.container} style={getStyles()}>
         {Array.from({ length: x * y }, (_, index) => index).map((_, index) => (
           // <Grid y={Math.floor(index / x)} x={index % x} type={bombsAxisArrs.includes(index) ? GridType.bomb : GridType.empty} />
-          <Grid key={index} index={index} y={Math.floor(index / x)} x={index % x} {...judgeGridType(index)} level={level} showMode={showMode} checked={checked} setChecked={setChecked} />
+          <Grid key={index} index={index} y={Math.floor(index / x)} x={index % x} {...judgeGridType(index)} level={level} showMode={showMode} />
         ))}
 
         {isOver && <GameOver resetGame={resetGame} />}

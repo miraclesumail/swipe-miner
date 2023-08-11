@@ -11,6 +11,7 @@ function useGameOver(resetGame: () => void) {
       ref.current.addEventListener(
         "animationend",
         (e: any) => {
+          console.log(e);
           const timer = setTimeout(() => {
             clearTimeout(timer);
             setDone(true);
