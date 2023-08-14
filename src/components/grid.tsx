@@ -4,6 +4,7 @@ import _ from "lodash";
 import flagPng from "@/assets/flag.png";
 import { Context } from "@/components/container";
 import styles from "@/components/style.module.scss";
+import * as Actions from "@/actions/types";
 
 function getRestArrs(a: number[], b: number[]) {
   return a.filter((item) => !b.includes(item));
@@ -44,7 +45,7 @@ const Grid: FC<GridProps> = ({ type, amount, x, y, index, level, showMode, click
     const siblings = getValidSiblings(index, params[0], params[1]);
 
     const filterSiblings = getRestArrs(siblings, alreadyCheck);
-    dispatch({ type: "toggleClickArrs", payload: [...siblings, index] });
+    dispatch({ type: Actions.TOGGLE_CLICK_ARRS, payload: [...siblings, index] });
 
     filterSiblings.filter((index) => judgeGridType(index).type === GridType.empty).forEach((item) => revealGrid(item, _.uniq([...siblings, ...alreadyCheck, index])));
   }
@@ -56,7 +57,7 @@ const Grid: FC<GridProps> = ({ type, amount, x, y, index, level, showMode, click
     if (type === GridType.around) {
       // 还没有click过的
       if (!clickArrs.length) startCount();
-      return dispatch({ type: "toggleClickArrs", payload: [index] });
+      return dispatch({ type: Actions.TOGGLE_CLICK_ARRS, payload: [index] });
     }
 
     // 雷
@@ -65,7 +66,7 @@ const Grid: FC<GridProps> = ({ type, amount, x, y, index, level, showMode, click
     }
 
     if (!clickArrs.length) startCount();
-    dispatch({ type: "toggleClickArrs", payload: [index] });
+    dispatch({ type: Actions.TOGGLE_CLICK_ARRS, payload: [index] });
     // 空格
     revealGrid(index);
   };
@@ -82,7 +83,7 @@ const Grid: FC<GridProps> = ({ type, amount, x, y, index, level, showMode, click
 
   const onContextMenu = (e: MouseEvent) => {
     e.preventDefault();
-    dispatch({ type: "toggleFlagArrs", payload: index });
+    dispatch({ type: Actions.TOGGLE_FLAG_ARRS, payload: index });
   };
 
   const renderGrid = () => {

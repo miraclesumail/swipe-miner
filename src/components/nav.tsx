@@ -4,6 +4,7 @@ import classnames from "classnames";
 import styles from "@/components/style.module.scss";
 import flagPng from "@/assets/flag.png";
 import clock from "@/assets/clock.png";
+import * as Actions from "@/actions/types";
 
 const Difficulty = [
   {
@@ -29,7 +30,7 @@ const Nav: FC<any> = ({ resetGame, showMode, toggleShow, clearTimer, flagArrs, b
     if (e.target.value !== level) {
       resetGame();
       clearTimer();
-      dispatch({ type: "setLevel", payload: e.target.value });
+      dispatch({ type: Actions.SET_LEVEL, payload: e.target.value });
     }
   };
 

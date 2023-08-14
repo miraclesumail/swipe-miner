@@ -1,4 +1,5 @@
 import { createContext, useMemo, useReducer, useRef } from "react";
+import * as Actions from "@/actions/types";
 import Nav from "@/components/nav";
 import useGenerate from "@/hooks/useGenerate";
 import useCount from "@/hooks/useCount";
@@ -35,29 +36,29 @@ const initialState: any = {
 
 function reducer(state: typeof initialState, action: any) {
   switch (action.type) {
-    case "toggleClickArrs": {
+    case Actions.TOGGLE_CLICK_ARRS: {
       return { ...state, clickArrs: Array.from(new Set([...state.clickArrs, ...action.payload])) };
     }
-    case "toggleFlagArrs": {
+    case Actions.TOGGLE_FLAG_ARRS: {
       if (state.flagArrs.includes(action.payload)) {
         return { ...state, flagArrs: [...state.flagArrs.filter((item: number) => item !== action.payload)] };
       } else {
         return { ...state, flagArrs: [...state.flagArrs, action.payload] };
       }
     }
-    case "setIsFliping": {
+    case Actions.SET_IS_FLIPING: {
       return { ...state, isFliping: true };
     }
-    case "setIsOver": {
+    case Actions.SET_IS_OVER: {
       return { ...state, isOver: action.payload };
     }
-    case "setShowMode": {
+    case Actions.SET_SHOW_MODE: {
       return { ...state, showMode: action.payload };
     }
-    case "setLevel": {
+    case Actions.SET_LEVEL: {
       return { ...state, level: action.payload };
     }
-    case "reset": {
+    case Actions.RESET: {
       return {
         ...initialState,
         level: state.level,
@@ -88,11 +89,11 @@ const Container = () => {
   // 翻开所有雷
   function toggleAllBomb(copyBombArrs: number[]) {
     clearTimeout(timer.current);
-    if (!copyBombArrs.length) return dispatch({ type: "setIsOver", payload: true });
+    if (!copyBombArrs.length) return dispatch({ type: Actions.SET_IS_OVER, payload: true });
 
     const targetIndex = copyBombArrs.shift() as number;
     if (!clickArrs.includes(targetIndex)) {
-      dispatch({ type: "toggleClickArrs", payload: [targetIndex] });
+      dispatch({ type: Actions.TOGGLE_CLICK_ARRS, payload: [targetIndex] });
     }
     timer.current = setTimeout(() => toggleAllBomb(copyBombArrs), 100);
   }
@@ -100,8 +101,8 @@ const Container = () => {
   // when hit a bomb
   function clickBomb(index: number) {
     console.log("GridType.bombGridType.bomb");
-    dispatch({ type: "setIsFliping" });
-    dispatch({ type: "toggleClickArrs", payload: [index] });
+    dispatch({ type: Actions.SET_IS_FLIPING });
+    dispatch({ type: Actions.TOGGLE_CLICK_ARRS, payload: [index] });
     stop();
     const copyBombArrs = [...bombsAxisArrs].filter((item) => item !== index);
     timer.current = setTimeout(() => toggleAllBomb(copyBombArrs), 100);
@@ -116,11 +117,11 @@ const Container = () => {
   function resetGame() {
     reset();
     resetCount();
-    dispatch({ type: "reset" });
+    dispatch({ type: Actions.RESET });
   }
 
   function toggleShow() {
-    dispatch({ type: "setShowMode", payload: !showMode });
+    dispatch({ type: Actions.SET_SHOW_MODE, payload: !showMode });
   }
 
   // 是否通关
