@@ -1,10 +1,10 @@
-import { createContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { createContext, useMemo, useReducer, useRef } from "react";
 import * as Actions from "@/actions/types";
 import Nav from "@/components/nav";
 import useGenerate from "@/hooks/useGenerate";
 import useCount from "@/hooks/useCount";
 import GameOver from "@/components/gameOver";
-import { dialog } from "@/components/dialog";
+// import { dialog } from "@/components/dialog";
 import Grid from "@/components/grid";
 import styles from "@/components/style.module.scss";
 
