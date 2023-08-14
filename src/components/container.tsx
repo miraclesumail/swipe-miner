@@ -1,9 +1,10 @@
-import { createContext, useMemo, useReducer, useRef } from "react";
+import { createContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import * as Actions from "@/actions/types";
 import Nav from "@/components/nav";
 import useGenerate from "@/hooks/useGenerate";
 import useCount from "@/hooks/useCount";
 import GameOver from "@/components/gameOver";
+import classnames from "classnames";
 // import { dialog } from "@/components/dialog";
 import Grid from "@/components/grid";
 import styles from "@/components/style.module.scss";
@@ -65,7 +66,10 @@ function reducer(state: typeof initialState, action: any) {
 }
 
 const Container = () => {
+  const [isShaking, setIsShake] = useState<boolean>(true);
+
   const timer = useRef<any>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
 
   const [{ flagArrs, clickArrs, isFliping, isOver, level, showMode }, dispatch]: any = useReducer(reducer, initialState);
 
@@ -80,6 +84,17 @@ const Container = () => {
     gridTemplateColumns: `repeat(${x}, 1fr)`,
     gridTemplateRows: `repeat(${y}, 1fr)`,
   });
+
+  useEffect(() => {
+    wrapRef.current?.addEventListener(
+      "animationend",
+      (e: AnimationEvent) => {
+        console.log(e);
+        setIsShake(false);
+      },
+      false
+    );
+  }, []);
 
   // useEffect(() => {
   //   const hide = dialog({
@@ -113,6 +128,7 @@ const Container = () => {
   // when hit a bomb
   function clickBomb(index: number) {
     console.log("GridType.bombGridType.bomb");
+    setIsShake(true);
     dispatch({ type: Actions.SET_IS_FLIPING });
     dispatch({ type: Actions.TOGGLE_CLICK_ARRS, payload: [index] });
     stop();
@@ -145,7 +161,7 @@ const Container = () => {
     <Context.Provider value={{ flagArrs, clickArrs, dispatch, bombsAxisArrs, judgeGridType, isFliping, level }}>
       <div>
         <Nav resetGame={resetGame} toggleShow={toggleShow} clearTimer={clearTimer} bombsAxisArrs={bombsAxisArrs} flagArrs={flagArrs} count={count} level={level} />
-        <div className={styles.container} style={getStyles()}>
+        <div className={classnames(styles.container, "animate__animated", isShaking ? "animate__shakeXY" : "")} style={getStyles()} ref={wrapRef}>
           {Array.from({ length: x * y }, (_, index) => index).map((_, index) => (
             <Grid key={index} index={index} y={Math.floor(index / x)} x={index % x} {...judgeGridType(index)} level={level} showMode={showMode} clickBomb={clickBomb} startCount={startCount} />
           ))}
