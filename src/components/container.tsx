@@ -1,17 +1,12 @@
-import { createContext, useMemo, useReducer, useRef } from "react";
+import { createContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import * as Actions from "@/actions/types";
 import Nav from "@/components/nav";
 import useGenerate from "@/hooks/useGenerate";
 import useCount from "@/hooks/useCount";
 import GameOver from "@/components/gameOver";
+import { dialog } from "@/components/dialog";
 import Grid from "@/components/grid";
 import styles from "@/components/style.module.scss";
-
-/**
- * 10 * 8 small
- * 18* 14 medium
- * @returns
- */
 
 type ContextProps = {
   flagArrs: any[];
@@ -86,6 +81,23 @@ const Container = () => {
     gridTemplateRows: `repeat(${y}, 1fr)`,
   });
 
+  // useEffect(() => {
+  //   const hide = dialog({
+  //     title: "标题",
+  //     content: <div>sfsdfdsf</div>,
+  //     buttons: [
+  //       {
+  //         text: "sadad",
+  //         action: () => hide(),
+  //       },
+  //       {
+  //         text: "确认下住",
+  //         action: () => hide(),
+  //       },
+  //     ],
+  //   });
+  // }, []);
+
   // 翻开所有雷
   function toggleAllBomb(copyBombArrs: number[]) {
     clearTimeout(timer.current);
@@ -142,6 +154,27 @@ const Container = () => {
           {isSuccess && <GameOver resetGame={resetGame} type={"success"} />}
         </div>
       </div>
+      {/* <Dialog
+        visible={visible}
+        title={"this is header"}
+        content={
+          <div>
+            <div>content</div>content
+            <div>content</div>content
+            <div>content</div>content
+          </div>
+        }
+        onClose={() => setVisible(false)}
+        buttons={[
+          {
+            action: () => setVisible(false),
+          },
+          {
+            text: "确认下住",
+            action: () => setVisible(false),
+          },
+        ]}
+      /> */}
     </Context.Provider>
   );
 };

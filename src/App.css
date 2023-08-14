@@ -5,6 +5,10 @@
   text-align: center;
 }
 
+.animate__animated.animate__bounce {
+  --animate-duration: 2s;
+}
+
 * {
   box-sizing: border-box;
 }
